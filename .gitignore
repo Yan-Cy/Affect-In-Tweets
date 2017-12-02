@@ -1,0 +1,7 @@
+/cnn-sentence/runs
+/cnn-sentence/tmp
+/datasets
+/light-gbm/LightGBM-master
+/light-gbm/model.txt
+/wordvec/*.txt
+/wordvec/*.bin
