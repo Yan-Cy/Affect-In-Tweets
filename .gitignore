@@ -5,3 +5,5 @@
 /light-gbm/model.txt
 /wordvec/*.txt
 /wordvec/*.bin
+/EI-OC-EN/runs
+/EI-OC-EN/tmp

@@ -9,17 +9,19 @@ import data_helpers
 from text_cnn import TextCNN
 from tensorflow.contrib import learn
 import csv
-from sklearn.metrics import mean_squared_error
 
 # Parameters
 # ==================================================
 
 # Data Parameters
-tf.flags.DEFINE_string("data_dir", "../datasets", "Data source for training.")
+#tf.flags.DEFINE_string("positive_data_file", "./data/rt-polaritydata/rt-polarity.pos", "Data source for the positive data.")
+#tf.flags.DEFINE_string("negative_data_file", "./data/rt-polaritydata/rt-polarity.neg", "Data source for the negative data.")
+tf.flags.DEFINE_string("data_dir", "../Dataset/eval/", "Data source for training.")
 
 # Eval Parameters
-tf.flags.DEFINE_integer("batch_size", 128, "Batch Size (default: 64)")
-tf.flags.DEFINE_string("checkpoint_dir", "./runs/{}/vec200/checkpoints", "Checkpoint directory from training run")
+tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
+tf.flags.DEFINE_string("checkpoint_dir", "./runs/{}/checkpoints", "Checkpoint directory from training run")
+tf.flags.DEFINE_boolean("eval_train", True, "Evaluate on all training data")
 
 # Misc Parameters
 tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
@@ -33,15 +35,16 @@ for attr, value in sorted(FLAGS.__flags.items()):
     print("{}={}".format(attr.upper(), value))
 print("")
 
-tasks = ['anger', 'fear', 'joy', 'sadness']
+tasks =['anger', 'fear', 'joy', 'sadness']
+
+total_correct = 0.0
+total = 0.0
 
 for task in tasks:
-    print 'Running for task', task
-    checkpoint_dir = FLAGS.checkpoint_dir.format(task)
-
     # CHANGE THIS: Load data. Load your own data here
     x_raw, y_test = data_helpers.load_data_and_labels(FLAGS.data_dir, task, 'test')
-    #y_test = np.argmax(y_test, axis=1)
+    y_test = np.argmax(y_test, axis=1)
+
     #print y_test
 
     # Map data into vocabulary
@@ -49,15 +52,11 @@ for task in tasks:
     #vocab_processor = learn.preprocessing.VocabularyProcessor.restore(vocab_path)
     #x_test = np.array(list(vocab_processor.transform(x_raw)))
     x_test, vocab_vector = data_helpers.build_vocabulary(x_raw)
-    #np.save('tmp/x_test.data', x_test)
-    #x_test = np.load('tmp/x_test.data.npy')
-    #vocab_vector = np.load('tmp/vocab_vector.data.npy')
 
     print("\nEvaluating...\n")
-
+    checkpoint_dir = FLAGS.checkpoint_dir.format(task)
     # Evaluation
     # ==================================================
-    print checkpoint_dir
     checkpoint_file = tf.train.latest_checkpoint(checkpoint_dir)
     graph = tf.Graph()
     with graph.as_default():
@@ -76,39 +75,33 @@ for task in tasks:
             dropout_keep_prob = graph.get_operation_by_name("dropout_keep_prob").outputs[0]
 
             # Tensors we want to evaluate
-            #predictions = graph.get_operation_by_name("output/predictions").outputs[0]
-            scores = graph.get_operation_by_name("output/scores").outputs[0]
+            predictions = graph.get_operation_by_name("output/predictions").outputs[0]
 
             # Generate batches for one epoch
             batches = data_helpers.batch_iter(list(x_test), FLAGS.batch_size, 1, shuffle=False)
 
             # Collect the predictions here
-            #all_predictions = []
-            all_scores = []
+            all_predictions = []
 
             for x_test_batch in batches:
-                batch_predictions = sess.run(scores, {input_x: x_test_batch, dropout_keep_prob: 1.0})
-                #all_predictions = np.concatenate([all_predictions, batch_predictions])
-                #print batch_predictions
-                batch_predictions = [x[0] for x in batch_predictions]
-                all_scores = np.concatenate([all_scores, batch_predictions])
+                batch_predictions = sess.run(predictions, {input_x: x_test_batch, dropout_keep_prob: 1.0})
+                all_predictions = np.concatenate([all_predictions, batch_predictions])
 
+    # Print accuracy if y_test is defined
+    if y_test is not None:
+        correct_predictions = float(sum(all_predictions == y_test))
+        print("Total number of test examples: {}".format(len(y_test)))
+        print("Accuracy: {:g}".format(correct_predictions/float(len(y_test))))
 
-
-    print 'Mean Square Error:', mean_squared_error(all_scores, y_test) ** 0.5
-
-    # Save
-    with open('../datasets/{}-ratings-0to1.test.target.txt'.format(task)) as f:
-        data = f.readlines()
-    data = [x.strip().split('\t') for x in data]
-    senid = np.array([x[0] for x in data])
-    mood = np.array([x[2] for x in data])
-    x_raw = np.array([x[1] for x in data])
-
-    predictions_human_readable = np.column_stack((senid, x_raw, mood, all_scores))
-    out_path = '../results/cnn/{}-pred.txt'.format(task)
+    # Save the evaluation to a csv
+    predictions_human_readable = np.column_stack((np.array(x_raw), all_predictions))
+    out_path = os.path.join(checkpoint_dir, "..", "prediction_{}.csv".format(task))
+    print("Saving evaluation to {0}".format(out_path))
     with open(out_path, 'w') as f:
-        for x in predictions_human_readable:
-            f.write('\t'.join(x) + '\n')
+        csv.writer(f).writerows(predictions_human_readable)
 
 
+    total_correct += correct_predictions
+    total += len(y_test)
+
+print('Total Accuracy:', total_correct / total)

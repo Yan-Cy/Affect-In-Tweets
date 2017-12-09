@@ -43,7 +43,7 @@ def load_dataset(set_label, task, gensim_model = None):
         return None
 
     x_raw = np.array([sent[1] for sent in data])
-    sentences = np.array([clean_str(sent[1]) for sent in data])
+    sentences = np.array([clean_str(sent[1]).split(' ') for sent in data])
     x, gensim_model = sentences2vectors(sentences, gensim_model)
     x_id = np.array([sent[0] for sent in data])
     if data[0][3] == 'NONE':
@@ -59,18 +59,23 @@ def sentences2vectors(sentences, model = None):
         model_name = '../wordvec/GoogleNews-vectors-negative300.bin'
         print 'loading Word Vector model from', model_name
         #model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=False)
-        print gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=True)
+        model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=True)
 
     vector_size = len(model.wv.syn0[0])
     vectors = np.zeros((len(sentences), vector_size))
     print 'Word Vector size: ', vector_size
     
+    match_ratio = 0.0
     for i, sentence in enumerate(sentences):
+        #print sentence, len(sentence)
         num_word = 0.0
         for word in sentence:
             if word in model.wv.vocab:
                 num_word += 1
                 vectors[i] += model.wv[word]
         vectors[i] /= num_word
+        match_ratio += num_word / len(sentence)
+    print 'Average sentence matching ratio', match_ratio / len(sentences)
+
     return vectors, model
 

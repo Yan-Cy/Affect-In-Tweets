@@ -16,7 +16,7 @@ from tensorflow.contrib import learn
 tf.flags.DEFINE_float("dev_sample_percentage", .1, "Percentage of the training data to use for validation")
 #tf.flags.DEFINE_string("positive_data_file", "./data/rt-polaritydata/rt-polarity.pos", "Data source for the positive data.")
 #tf.flags.DEFINE_string("negative_data_file", "./data/rt-polaritydata/rt-polarity.neg", "Data source for the negative data.")
-tf.flags.DEFINE_string("data_dir", "../datasets", "Data source for training.")
+tf.flags.DEFINE_string("data_dir", "./datasets/train/", "Data source for training.")
 
 # Model Hyperparameters
 #128 / 300
@@ -29,7 +29,7 @@ tf.flags.DEFINE_float("l2_reg_lambda", 0.1, "L2 regularization lambda (default: 
 # Training parameters
 # 64 / 128
 tf.flags.DEFINE_integer("batch_size", 64, "Batch Size (default: 64)")
-tf.flags.DEFINE_integer("num_epochs", 600, "Number of training epochs (default: 200)")
+tf.flags.DEFINE_integer("num_epochs", 100, "Number of training epochs (default: 200)")
 tf.flags.DEFINE_integer("evaluate_every", 100, "Evaluate model on dev set after this many steps (default: 100)")
 tf.flags.DEFINE_integer("checkpoint_every", 100, "Save model after this many steps (default: 100)")
 tf.flags.DEFINE_integer("num_checkpoints", 5, "Number of checkpoints to store (default: 5)")
@@ -48,11 +48,11 @@ print("")
 # Data Preparation
 # ==================================================
 
-tasks = ['anger', 'fear', 'joy', 'sadness']
+#tasks = ['anger', 'fear', 'joy', 'sadness']
+
+tasks = ['joy', 'sadness']
 
 for task in tasks:
-    print 'running for task', task
-
     # Load data
     print("Loading data...")
     x_text, y = data_helpers.load_data_and_labels(FLAGS.data_dir, task, 'train')
@@ -121,7 +121,7 @@ for task in tasks:
 
             # Output directory for models and summaries
             timestamp = str(int(time.time()))
-            out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", task, timestamp))
+            out_dir = os.path.abspath(os.path.join(os.path.curdir, "runs", timestamp))
             print("Writing to {}\n".format(out_dir))
 
             # Summaries for loss and accuracy
@@ -165,7 +165,7 @@ for task in tasks:
                     [train_op, global_step, train_summary_op, cnn.loss, cnn.accuracy],
                     feed_dict)
                 time_str = datetime.datetime.now().isoformat()
-                print("{}: step {}, loss {:g}, mse {:g}".format(time_str, step, loss, accuracy))
+                print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
                 train_summary_writer.add_summary(summaries, step)
 
             def dev_step(x_batch, y_batch, writer=None):
@@ -181,8 +181,7 @@ for task in tasks:
                     [global_step, dev_summary_op, cnn.loss, cnn.accuracy],
                     feed_dict)
                 time_str = datetime.datetime.now().isoformat()
-                print("{}: step {}, loss {:g}, mse {:g}".format(time_str, step, loss, accuracy))
-                #print("{}: step {}, loss {:g}".format(time_str, step, loss))
+                print("{}: step {}, loss {:g}, acc {:g}".format(time_str, step, loss, accuracy))
                 if writer:
                     writer.add_summary(summaries, step)
 

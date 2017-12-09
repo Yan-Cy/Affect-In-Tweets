@@ -11,7 +11,6 @@ class TextCNN(object):
       self, sequence_length, num_classes, vocab_size, vocab_vector,
       embedding_size, filter_sizes, num_filters, l2_reg_lambda=0.0):
 
-        #with tf.device('/gpu:0'):
         # Placeholders for input, output and dropout
         self.input_x = tf.placeholder(tf.int32, [None, sequence_length], name="input_x")
         self.input_y = tf.placeholder(tf.float32, [None, num_classes], name="input_y")
@@ -22,7 +21,6 @@ class TextCNN(object):
 
         # Embedding layer
         with tf.device('/cpu:0'), tf.name_scope("embedding"):
-        #with tf.name_scope("embedding"):
             #self.W = tf.Variable(
             #    tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0),
             #    name="W")
@@ -76,18 +74,14 @@ class TextCNN(object):
             l2_loss += tf.nn.l2_loss(W)
             l2_loss += tf.nn.l2_loss(b)
             self.scores = tf.nn.xw_plus_b(self.h_drop, W, b, name="scores")
-            #self.predictions = tf.argmax(self.scores, 1, name="predictions")
+            self.predictions = tf.argmax(self.scores, 1, name="predictions")
 
         # Calculate mean cross-entropy loss
         with tf.name_scope("loss"):
-            #losses = tf.nn.softmax_cross_entropy_with_logits(logits=self.scores, labels=self.input_y)
-            #losses = tf.losses.mean_squared_error(labels=self.input_y,predictions=self.scores)
-            losses = tf.nn.l2_loss(self.scores - self.input_y)
-            #self.loss = tf.reduce_mean(losses) + l2_reg_lambda * l2_loss
-            self.loss = losses + l2_reg_lambda * l2_loss
+            losses = tf.nn.softmax_cross_entropy_with_logits(logits=self.scores, labels=self.input_y)
+            self.loss = tf.reduce_mean(losses) + l2_reg_lambda * l2_loss
 
         # Accuracy
         with tf.name_scope("accuracy"):
-            #correct_predictions = tf.equal(self.predictions, tf.argmax(self.input_y, 1))
-            #self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, "float"), name="accuracy")
-            self.accuracy = tf.losses.mean_squared_error(labels=self.input_y,predictions=self.scores) ** 0.5
+            correct_predictions = tf.equal(self.predictions, tf.argmax(self.input_y, 1))
+            self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, "float"), name="accuracy")

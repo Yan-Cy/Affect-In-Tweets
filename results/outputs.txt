@@ -1,0 +1,150 @@
+* XGBoost
+	* MSE
+		* anger
+		* fear: 0.163018774664
+		* joy: 0.184928302638
+		* sadness: 0.158565998611
+	avg_pearson:0.576251252113
+	avg_spearman:0.559935247923
+	anger_pearson:0.547537007112
+	anger_spearman:0.527015207641
+	fear_pearson:0.588628303921
+	fear_spearman:0.551894427906
+	joy_pearson:0.534239033449
+	joy_spearman:0.529091263249
+	sadness_pearson:0.63460066397
+	sadness_spearman:0.631740092895
+	avg_pearson_range_05_1:0.418476047773
+	avg_spearman_range_05_1:0.394021449741
+	anger_pearson_range_05_1:0.429024219193
+	anger_spearman_range_05_1:0.41833295011
+	fear_pearson_range_05_1:0.451656035846
+	fear_spearman_range_05_1:0.409970972623
+	joy_pearson_range_05_1:0.307203250243
+	joy_spearman_range_05_1:0.290176699838
+	sadness_pearson_range_05_1:0.486020685809
+	sadness_spearman_range_05_1:0.457605176393
+
+* LightGBM
+	* MSE
+		* anger
+		* fear: 0.19714111122676375
+		* joy: 0.19888205508127099
+		* sadness: 0.19934686973500571 
+	* MSE
+		* anger
+		* fear: 0.16584910782011045
+		* joy: 0.18895960834102887
+		* sadness: 0.1618603301461054
+	avg_pearson:0.547289911121
+	avg_spearman:0.526567074891
+	anger_pearson:0.506277829271
+	anger_spearman:0.484107305622
+	fear_pearson:0.564751748973
+	fear_spearman:0.526439548764
+	joy_pearson:0.508320891046
+	joy_spearman:0.500694940517
+	sadness_pearson:0.609809175195
+	sadness_spearman:0.59502650466
+	avg_pearson_range_05_1:0.390156616976
+	avg_spearman_range_05_1:0.356818667392
+	anger_pearson_range_05_1:0.356159625925
+	anger_spearman_range_05_1:0.344264793697
+	fear_pearson_range_05_1:0.463135284105
+	fear_spearman_range_05_1:0.407233321103
+	joy_pearson_range_05_1:0.271671745512
+	joy_spearman_range_05_1:0.242993569464
+	sadness_pearson_range_05_1:0.469659812361
+	sadness_spearman_range_05_1:0.432782985304
+
+	
+
+* Support Vector Regression
+
+	Running for task anger
+	Load data...
+	loading Word Vector model from ../wordvec/GoogleNews-vectors-negative300.bin
+	Word Vector size:  300
+	Average sentence matching ratio 0.800403753045
+	Word Vector size:  300
+	Average sentence matching ratio 0.797586142399
+	SVR rbf 0.544267074024
+	SVR lin 0.549179144433
+	SVR poly 0.49997362112
+	Running for task fear
+	Load data...
+	Word Vector size:  300
+	Average sentence matching ratio 0.795234569781
+	Word Vector size:  300
+	Average sentence matching ratio 0.791231276685
+	SVR rbf 0.200910942403
+	SVR lin 0.194591333239
+	SVR poly 0.167119217977
+	Running for task joy
+	Load data...
+	Word Vector size:  300
+	Average sentence matching ratio 0.781342414407
+	Word Vector size:  300
+	Average sentence matching ratio 0.785004443308
+	SVR rbf 0.214275965706
+	SVR lin 0.224224654559
+	SVR poly 0.189360677574
+	Running for task sadness
+	Load data...
+	Word Vector size:  300
+	Average sentence matching ratio 0.80399667216
+	Word Vector size:  300
+	Average sentence matching ratio 0.801067122672
+	SVR rbf 0.186075091922
+	SVR lin 0.213806532276
+	SVR poly 0.171808242898
+
+* Linear Regression
+
+	Running for task anger
+	Load data...
+	loading Word Vector model from ../wordvec/GoogleNews-vectors-negative300.bin
+	Word Vector size:  300
+	Average sentence matching ratio 0.800403753045
+	Word Vector size:  300
+	Average sentence matching ratio 0.797586142399
+	Ridge Regression 0.519105317546
+	Bayesian Ridge Regression 0.512411074036
+	Least Angle Regression 0.495724945164
+	KNN Regression 0.542721537576
+	Running for task fear
+	Load data...
+	Word Vector size:  300
+	Average sentence matching ratio 0.795234569781
+	Word Vector size:  300
+	Average sentence matching ratio 0.791231276685
+	Ridge Regression 0.168143525905
+	Bayesian Ridge Regression 0.163017973503
+	Least Angle Regression 0.200673890518
+	KNN Regression 0.183556408539
+	Running for task joy
+	Load data...
+	Word Vector size:  300
+	Average sentence matching ratio 0.781342414407
+	Word Vector size:  300
+	Average sentence matching ratio 0.785004443308
+	Ridge Regression 0.184374249931
+	Bayesian Ridge Regression 0.18105780066
+	Least Angle Regression 0.21615003014
+	KNN Regression 0.19466767772
+	Running for task sadness
+	Load data...
+	Word Vector size:  300
+	Average sentence matching ratio 0.80399667216
+	Word Vector size:  300
+	Average sentence matching ratio 0.801067122672
+	Ridge Regression 0.164263867266
+	Bayesian Ridge Regression 0.159833838916
+	Least Angle Regression 0.202465931109
+	KNN Regression 0.181275900715
+
+
+
+
+
+

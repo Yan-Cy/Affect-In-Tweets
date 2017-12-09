@@ -34,24 +34,21 @@ def load_data_and_labels(data_dir, task, set_label):
     # Load data from files
     
     if set_label == 'train':
-        train_data = list(open('../datasets/{}-ratings-0to1.train.txt'.format(task), "r").readlines())
+        train_data = list(open('./datasets/EI-oc-En-train/EI-oc-En-{}-train.txt'.format(task), "r").readlines())
         train_data = [s.strip().split('\t') for s in train_data]
-        dev_data = list(open('../datasets/{}-ratings-0to1.dev.gold.txt'.format(task), "r").readlines())
-        dev_data = [s.strip().split('\t') for s in dev_data]
-        data = train_data + dev_data
+        data = train_data
     elif set_label == 'test':
-        data = list(open('../datasets/{}-ratings-0to1.test.target.txt'.format(task), "r").readlines())
-        data = [s.strip().split('\t') for s in data]
+        data = list(open('./datasets/2018-EI-oc-En-dev/2018-EI-oc-En-{}-dev.txt'.format(task), "r").readlines())
+        data = [s.strip().split('\t') for s in data[1:]]
     else:
         print 'Wrong set label !'
         return None  
 
     # Split by words
     x_text = [clean_str(sent[1]).split(' ') for sent in data]
-    if data[0][3] == 'NONE':
-        y = np.array([[0.0] for sent in data])
-    else:
-        y = np.array([[float(sent[3])] for sent in data])
+    y = np.zeros((len(x_text), 4))
+    for i, sent in enumerate(data):
+        y[i, int(sent[-1][0])] = 1
     return [x_text, y]
 
 
@@ -78,6 +75,7 @@ def build_vocabulary(sentences):
     #model = gensim.models.KeyedVectors.load_word2vec_format('../word2vec/GoogleNews-vectors-negative300.bin', binary=True)
     assert(type(sentences[0]) == list)
     model_name = '../wordvec/gensim_glove_vectors.txt'
+    #model_name = '../wordvec/GoogleNews-vectors-negative300.bin'
     print 'loading Word Vector model from', model_name
     model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=False)
 
