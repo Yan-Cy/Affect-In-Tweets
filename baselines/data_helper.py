@@ -56,10 +56,10 @@ def load_dataset(set_label, task, gensim_model = None):
 def sentences2vectors(sentences, model = None):
     if model == None:
         #model_name = '../wordvec/gensim_glove_vectors_200.txt'
-        model_name = '../wordvec/GoogleNews-vectors-negative300.bin'
+        model_name = '../wordvec/gensim_vectors.txt'
         print 'loading Word Vector model from', model_name
-        #model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=False)
-        model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=True)
+        model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=False)
+        #model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=True)
 
     vector_size = len(model.wv.syn0[0])
     vectors = np.zeros((len(sentences), vector_size))

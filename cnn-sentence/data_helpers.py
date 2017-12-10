@@ -77,7 +77,7 @@ def batch_iter(data, batch_size, num_epochs, shuffle=True):
 def build_vocabulary(sentences):
     #model = gensim.models.KeyedVectors.load_word2vec_format('../word2vec/GoogleNews-vectors-negative300.bin', binary=True)
     assert(type(sentences[0]) == list)
-    model_name = '../wordvec/gensim_glove_vectors.txt'
+    model_name = '../wordvec/gensim_vectors.txt'
     print 'loading Word Vector model from', model_name
     model = gensim.models.KeyedVectors.load_word2vec_format(model_name, binary=False)
 
